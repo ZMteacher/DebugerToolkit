@@ -26,8 +26,9 @@ public class LogEditor
         if (reportObj==null)
         {
             //reportObj= GameObject.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Runtime/Unity-Logs-Viewer/Reporter.prefab"));
-            reportObj = GameObject.Instantiate(EditorGUIUtility.Load("Reporter.prefab") as GameObject);
-            reportObj.name = "Reporter";
+            GameObject gameObject = new GameObject("Reporter");
+            UnityEngineInternal.APIUpdaterRuntimeServices.AddComponent(gameObject, "Library/PackageCache/com.zm.unitydebuger@319df6cdee/Editor/LogEditor.cs (29,13)", "Reporter");
+            UnityEngineInternal.APIUpdaterRuntimeServices.AddComponent(gameObject, "Library/PackageCache/com.zm.unitydebuger@319df6cdee/Editor/LogEditor.cs (30,13)", "ReporterMessageReceiver");
             AssetDatabase.SaveAssets();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
             AssetDatabase.Refresh();

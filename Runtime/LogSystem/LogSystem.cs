@@ -18,8 +18,12 @@ public class LogSystem : MonoBehaviour
 {
     void Awake()
     {
-
-#if OPEN_LOG  //菜单栏-ZMLog
+        InitLogSystem();
+    }
+    public static void InitLogSystem()
+    {
+        //菜单栏-ZMLog-开启日志系统/关闭日志系统
+#if OPEN_LOG  
         Debuger.InitLog(new LogConfig
         {
             openLog = true,
@@ -36,9 +40,8 @@ public class LogSystem : MonoBehaviour
         Debuger.LogGreen("LogGreen");
         Debuger.LogYellow("LogYellow");
 #else
-     Debug.unityLogger.logEnabled = false;
+        Debug.unityLogger.logEnabled = false;
 #endif
     }
-
 
 }

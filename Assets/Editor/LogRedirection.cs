@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 *
-* Title: ±ÏÒµ¼¶ÈÕÖ¾ÏµÍ³ 
+* Title: æ¯•ä¸šçº§æ—¥å¿—ç³»ç»Ÿ 
 *
-* Description: Ö§³Ö±¾µØÎÄ¼şĞ´Èë¡¢×Ô¶¨ÒåÑÕÉ«ÈÕÖ¾¡¢FPSÊµÊ±ÏÔÊ¾¡¢ÊÖ»úÈÕÖ¾ÔËĞĞÊ±²é¿´¡¢ÈÕÖ¾´úÂë±àÒëÌŞ³ı¡¢ProtoBuff×ªJson¡¢ÈÕÖ¾ÖØ¶¨Ïò
+* Description: æ”¯æŒæœ¬åœ°æ–‡ä»¶å†™å…¥ã€è‡ªå®šä¹‰é¢œè‰²æ—¥å¿—ã€FPSå®æ—¶æ˜¾ç¤ºã€æ‰‹æœºæ—¥å¿—è¿è¡Œæ—¶æŸ¥çœ‹ã€æ—¥å¿—ä»£ç ç¼–è¯‘å‰”é™¤ã€ProtoBuffè½¬Jsonã€æ—¥å¿—é‡å®šå‘
 * 
-* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d ÖıÃÎ
+* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d é“¸æ¢¦
 *
 * Date: 2023.8.13
 *
@@ -17,45 +17,57 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 /// <summary>
-/// Unity LogÖØ¶¨Ïò¡£±à¼­Æ÷ÏÂ£¬µã»÷logÌø×ªµ½´úÂëÎ»ÖÃ
+/// Unity Logé‡å®šå‘ã€‚ç¼–è¾‘å™¨ä¸‹ï¼Œç‚¹å‡»logè·³è½¬åˆ°ä»£ç ä½ç½®
 /// </summary>
 public class LogRedirection
 {
 #if UNITY_EDITOR
     /// <summary>
-    /// ×î´óÆ¥Åä¼ìË÷Éî¶È
+    /// æœ€å¤§åŒ¹é…æ£€ç´¢æ·±åº¦
     /// </summary>
     private const int MaxRegexMatch = 20;
-    // ´¦Àíasset´ò¿ªµÄcallbackº¯Êı
+    // å¤„ç†assetæ‰“å¼€çš„callbackå‡½æ•°
     [UnityEditor.Callbacks.OnOpenAssetAttribute(0)]
     static bool OnOpenAsset(int instance, int line)
     {
-        // ×Ô¶¨Òåº¯Êı£¬ÓÃÀ´»ñÈ¡stacktrace
+        // è‡ªå®šä¹‰å‡½æ•°ï¼Œç”¨æ¥è·å–stacktrace
         string stack_trace = GetStackTrace();
 
-        // Í¨¹ıstacktraceÀ´ÅĞ¶ÏÊÇ·ñÊÇ×Ô¶¨ÒåLog
+        // é€šè¿‡stacktraceæ¥åˆ¤æ–­æ˜¯å¦æ˜¯è‡ªå®šä¹‰Log
         if (!string.IsNullOrEmpty(stack_trace))
         {
-            if (stack_trace.Contains("Debuger:"))//ÕâÀïµÄ¡°* ¡±ÊÇ´Ó¶ÑÕ»ÖĞÉ¸Ñ¡×Ô¶¨ÒåµÄLog
+            if (stack_trace.Contains("Debuger:"))//è¿™é‡Œçš„â€œ* â€æ˜¯ä»å †æ ˆä¸­ç­›é€‰è‡ªå®šä¹‰çš„Log
             {
-                //Æ¥ÅäËùÓĞLogĞĞ
+                //åŒ¹é…æ‰€æœ‰Logè¡Œ
                 Match matches = Regex.Match(stack_trace, @"\(at(.+)\)", RegexOptions.IgnoreCase);
                 string pathline = "";
                 if (matches.Success)
                 {
-                    //ÕÒµ½·ÇDebuger½Å±¾½øĞĞÌø×ª
+                    bool isContainsLine = false;
+                    //æ‰¾åˆ°éDebugerè„šæœ¬è¿›è¡Œè·³è½¬
                     while (matches.Groups[1].Value.Contains("Debuger.cs"))
                     {
                         matches = matches.NextMatch();
+                        if (matches.Groups[1].Value.Contains("cs:"+line))
+                        {
+                            isContainsLine= true;
+                        }
                     }
- 
-                    //Ìø×ªÂß¼­
+                    //æŸ¥æ‰¾å“ˆè¡Œ
+                    if (!isContainsLine )
+                    {
+                        while (!matches.Groups[1].Value.Contains("cs:" + line))
+                        {
+                            matches = matches.NextMatch();
+                        }
+                    }
+                    //è·³è½¬é€»è¾‘
                     if (matches.Success)
                     {
                         pathline = matches.Groups[1].Value;
                         pathline = pathline.Replace(" ", "");
 
-                        //ÕÒµ½´úÂë¼°ĞĞÊı
+                        //æ‰¾åˆ°ä»£ç åŠè¡Œæ•°
                         int split_index = pathline.LastIndexOf(":");
                         string path = pathline.Substring(0, split_index);
                         line = Convert.ToInt32(pathline.Substring(split_index + 1));
@@ -81,43 +93,43 @@ public class LogRedirection
 
     static string GetStackTrace()
     {
-        // ÕÒµ½UnityEditor.EditorWindowµÄassembly
+        // æ‰¾åˆ°UnityEditor.EditorWindowçš„assembly
         var assembly_unity_editor = Assembly.GetAssembly(typeof(UnityEditor.EditorWindow));
         if (assembly_unity_editor == null) return null;
 
-        // ÕÒµ½ÀàUnityEditor.ConsoleWindow
+        // æ‰¾åˆ°ç±»UnityEditor.ConsoleWindow
         var type_console_window = assembly_unity_editor.GetType("UnityEditor.ConsoleWindow");
         if (type_console_window == null) return null;
-        // ÕÒµ½UnityEditor.ConsoleWindowÖĞµÄ³ÉÔ±ms_ConsoleWindow
+        // æ‰¾åˆ°UnityEditor.ConsoleWindowä¸­çš„æˆå‘˜ms_ConsoleWindow
         var field_console_window = type_console_window.GetField("ms_ConsoleWindow",
             System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
         if (field_console_window == null) return null;
-        // »ñÈ¡ms_ConsoleWindowµÄÖµ
+        // è·å–ms_ConsoleWindowçš„å€¼
         var instance_console_window = field_console_window.GetValue(null);
         if (instance_console_window == null) return null;
 
-        // Èç¹ûconsole´°¿ÚÊ±½¹µã´°¿ÚµÄ»°£¬»ñÈ¡stacktrace
+        // å¦‚æœconsoleçª—å£æ—¶ç„¦ç‚¹çª—å£çš„è¯ï¼Œè·å–stacktrace
         if ((object)UnityEditor.EditorWindow.focusedWindow == instance_console_window)
         {
-            // Í¨¹ıassembly»ñÈ¡ÀàListViewState
+            // é€šè¿‡assemblyè·å–ç±»ListViewState
             var type_list_view_state = assembly_unity_editor.GetType("UnityEditor.ListViewState");
             if (type_list_view_state == null) return null;
 
-            // ÕÒµ½ÀàUnityEditor.ConsoleWindowÖĞµÄ³ÉÔ±m_ListView
+            // æ‰¾åˆ°ç±»UnityEditor.ConsoleWindowä¸­çš„æˆå‘˜m_ListView
             var field_list_view = type_console_window.GetField("m_ListView",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             if (field_list_view == null) return null;
 
-            // »ñÈ¡m_ListViewµÄÖµ
+            // è·å–m_ListViewçš„å€¼
             var value_list_view = field_list_view.GetValue(instance_console_window);
             if (value_list_view == null) return null;
 
-            // ÕÒµ½ÀàUnityEditor.ConsoleWindowÖĞµÄ³ÉÔ±m_ActiveText
+            // æ‰¾åˆ°ç±»UnityEditor.ConsoleWindowä¸­çš„æˆå‘˜m_ActiveText
             var field_active_text = type_console_window.GetField("m_ActiveText",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             if (field_active_text == null) return null;
 
-            // »ñµÃm_ActiveTextµÄÖµ£¬¾ÍÊÇÎÒÃÇĞèÒªµÄstacktrace
+            // è·å¾—m_ActiveTextçš„å€¼ï¼Œå°±æ˜¯æˆ‘ä»¬éœ€è¦çš„stacktrace
             string value_active_text = field_active_text.GetValue(instance_console_window).ToString();
             return value_active_text;
         }

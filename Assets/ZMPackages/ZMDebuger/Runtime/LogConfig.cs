@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 *
-* Title: ±ÏÒµ¼¶ÈÕÖ¾ÏµÍ³ 
+* Title: æ¯•ä¸šçº§æ—¥å¿—ç³»ç»Ÿ
 *
-* Description: Ö§³Ö±¾µØÎÄ¼şĞ´Èë¡¢×Ô¶¨ÒåÑÕÉ«ÈÕÖ¾¡¢FPSÊµÊ±ÏÔÊ¾¡¢ÊÖ»úÈÕÖ¾ÔËĞĞÊ±²é¿´¡¢ÈÕÖ¾´úÂë±àÒëÌŞ³ı¡¢ProtoBuff×ªJson¡¢ÈÕÖ¾ÖØ¶¨Ïò
+* Description: æ”¯æŒæœ¬åœ°æ–‡ä»¶å†™å…¥ã€è‡ªå®šä¹‰é¢œè‰²æ—¥å¿—ã€FPSå®æ—¶æ˜¾ç¤ºã€æ‰‹æœºæ—¥å¿—è¿è¡Œæ—¶æŸ¥çœ‹ã€æ—¥å¿—ä»£ç ç¼–è¯‘å‰”é™¤ã€ProtoBuffè½¬Jsonã€æ—¥å¿—é‡å®šå‘
 * 
-* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d ÖıÃÎ
+* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d é“¸æ¢¦
 *
 * Date: 2023.8.13
 *
@@ -18,39 +18,39 @@ using UnityEngine;
 public class LogConfig  
 {
     /// <summary>
-    /// ÊÇ·ñ´ò¿ªÈÕÖ¾ÏµÍ³
+    /// æ˜¯å¦æ‰“å¼€æ—¥å¿—ç³»ç»Ÿ
     /// </summary>
     public bool openLog = true;
     /// <summary>
-    /// ÈÕÖ¾Ç°×º
+    /// æ—¥å¿—å‰ç¼€
     /// </summary>
     public string logHeadFix = "###";
     /// <summary>
-    /// ÊÇ·ñÏÔÊ¾Ê±¼ä
+    /// æ˜¯å¦æ˜¾ç¤ºæ—¶é—´
     /// </summary>
     public bool openTime = true;
     /// <summary>
-    /// ÏÔÊ¾Ïß³Ìid
+    /// æ˜¾ç¤ºçº¿ç¨‹id
     /// </summary>
     public bool showThreadID = true;
     /// <summary>
-    /// ÈÕÖ¾ÎÄ¼ş´¢´æ¿ª¹Ø
+    /// æ—¥å¿—æ–‡ä»¶å‚¨å­˜å¼€å…³
     /// </summary>
     public bool logSave = true;
     /// <summary>
-    /// ÊÇ·ñÏÔÊ¾FPS
+    /// æ˜¯å¦æ˜¾ç¤ºFPS
     /// </summary>
     public bool showFPS = true;
     /// <summary>
-    /// ÏÔÊ¾ÑÕÉ«Ãû³Æ
+    /// æ˜¾ç¤ºé¢œè‰²åç§°
     /// </summary>
     public bool showColorName = true;
     /// <summary>
-    /// ÎÄ¼ş´¢´æÂ·¾¶
+    /// æ–‡ä»¶å‚¨å­˜è·¯å¾„
     /// </summary>
     public string logFileSavePath { get { return Application.persistentDataPath + "/"; } }
     /// <summary>
-    /// ÈÕÖ¾ÎÄ¼şÃû³Æ
+    /// æ—¥å¿—æ–‡ä»¶åç§°
     /// </summary>
-    public string logFileName { get { return Application.productName + " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm")+".log"; } }
+    public string logFileName { get { return Application.productName + " " + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss-fff")+".log"; } }
 }

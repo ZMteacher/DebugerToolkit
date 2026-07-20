@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 *
-* Title: ±ÏÒµ¼¶ÈÕÖ¾ÏµÍ³ 
+* Title: æ¯•ä¸šçº§æ—¥å¿—ç³»ç»Ÿ
 *
-* Description: Ö§³Ö±¾µØÎÄ¼şĞ´Èë¡¢×Ô¶¨ÒåÑÕÉ«ÈÕÖ¾¡¢FPSÊµÊ±ÏÔÊ¾¡¢ÊÖ»úÈÕÖ¾ÔËĞĞÊ±²é¿´¡¢ÈÕÖ¾´úÂë±àÒëÌŞ³ı¡¢ProtoBuff×ªJson¡¢ÈÕÖ¾ÖØ¶¨Ïò
+* Description: æ”¯æŒæœ¬åœ°æ–‡ä»¶å†™å…¥ã€è‡ªå®šä¹‰é¢œè‰²æ—¥å¿—ã€FPSå®æ—¶æ˜¾ç¤ºã€æ‰‹æœºæ—¥å¿—è¿è¡Œæ—¶æŸ¥çœ‹ã€æ—¥å¿—ä»£ç ç¼–è¯‘å‰”é™¤ã€ProtoBuffè½¬Jsonã€æ—¥å¿—é‡å®šå‘
 * 
-* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d ÖıÃÎ
+* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d é“¸æ¢¦
 *
 * Date: 2023.8.13
 *
@@ -19,7 +19,7 @@ public class LogSystem : MonoBehaviour
     void Awake()
     {
 
-#if OPEN_LOG  //²Ëµ¥À¸-ZMLog
+#if OPEN_LOG  //èœå•æ -ZMLog
         Debuger.InitLog(new LogConfig
         {
             openLog = true,
@@ -29,14 +29,8 @@ public class LogSystem : MonoBehaviour
             logSave = true,
             showFPS = true,
         });
-        Debuger.Log("Log");
-        Debuger.LogWarning("LogWarning");
-        Debuger.LogError("LogError");
-        Debuger.ColorLog(LogColor.Red, "ColorLog");
-        Debuger.LogGreen("LogGreen");
-        Debuger.LogYellow("LogYellow");
 #else
-     Debug.unityLogger.logEnabled = false;
+        Debug.Log("LogSystem is closed, please open it in the menu bar-ZMLog");
 #endif
     }
 

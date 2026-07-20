@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 *
-* Title: ±ÏÒµ¼¶ÈÕÖ¾ÏµÍ³ 
+* Title: æ¯•ä¸šçº§æ—¥å¿—ç³»ç»Ÿ
 *
-* Description: Ö§³Ö±¾µØÎÄ¼şĞ´Èë¡¢×Ô¶¨ÒåÑÕÉ«ÈÕÖ¾¡¢FPSÊµÊ±ÏÔÊ¾¡¢ÊÖ»úÈÕÖ¾ÔËĞĞÊ±²é¿´¡¢ÈÕÖ¾´úÂë±àÒëÌŞ³ı¡¢ProtoBuff×ªJson¡¢ÈÕÖ¾ÖØ¶¨Ïò
+* Description: æ”¯æŒæœ¬åœ°æ–‡ä»¶å†™å…¥ã€è‡ªå®šä¹‰é¢œè‰²æ—¥å¿—ã€FPSå®æ—¶æ˜¾ç¤ºã€æ‰‹æœºæ—¥å¿—è¿è¡Œæ—¶æŸ¥çœ‹ã€æ—¥å¿—ä»£ç ç¼–è¯‘å‰”é™¤ã€ProtoBuffè½¬Jsonã€æ—¥å¿—é‡å®šå‘
 * 
-* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d ÖıÃÎ
+* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d é“¸æ¢¦
 *
 * Date: 2023.8.13
 *
@@ -20,7 +20,9 @@ using UnityEngine;
 
 public class Debuger  
 {
-    public static LogConfig cfg;
+    public static LogConfig cfg = new LogConfig();
+    private static UnityLogHelper sLogHelper;
+    private static FPS sFps;
     
     [Conditional("OPEN_LOG")]
     public static void InitLog(LogConfig _cfg = null)
@@ -35,20 +37,34 @@ public class Debuger
         }
         if (cfg.logSave)
         {
-            GameObject logObj = new GameObject("LogHelper");
-            GameObject.DontDestroyOnLoad(logObj);
-            UnityLogHelper unityLogHelper= logObj.AddComponent<UnityLogHelper>();
-            unityLogHelper.InitLogFileModule(cfg.logFileSavePath,cfg.logFileName);
+            if (sLogHelper == null)
+            {
+                GameObject logObj = new GameObject("LogHelper");
+                GameObject.DontDestroyOnLoad(logObj);
+                sLogHelper = logObj.AddComponent<UnityLogHelper>();
+                sLogHelper.InitLogFileModule(cfg.logFileSavePath,cfg.logFileName);
+            }
         }
         if (cfg.showFPS)
         {
-            GameObject fpsObj = new GameObject("FPS");
-            GameObject.DontDestroyOnLoad(fpsObj);
-            fpsObj.AddComponent<FPS>();
+            if (sFps == null)
+            {
+                GameObject fpsObj = new GameObject("FPS");
+                GameObject.DontDestroyOnLoad(fpsObj);
+                sFps = fpsObj.AddComponent<FPS>();
+            }
         }
     }
 
-    #region ÆÕÍ¨ÈÕÖ¾
+    internal static void NotifyLogHelperDestroyed(UnityLogHelper helper)
+    {
+        if (sLogHelper == helper)
+        {
+            sLogHelper = null;
+        }
+    }
+
+    #region æ™®é€šæ—¥å¿—
     [Conditional("OPEN_LOG")]
     public static void Log(object obj)
     {
@@ -56,7 +72,7 @@ public class Debuger
         {
             return;
         }
-        string log= GenerateLog(obj.ToString());
+        string log= GenerateLog(obj == null ? "null" : obj.ToString());
         UnityEngine.Debug.Log(log);
     }
     [Conditional("OPEN_LOG")]
@@ -66,15 +82,15 @@ public class Debuger
         {
             return;
         }
-        string conent = string.Empty;
+        StringBuilder conent = new StringBuilder();
         if (args!=null)
         {
             foreach (var item in args)
             {
-                conent += item;
+                conent.Append(item);
             }
         }
-        string log = GenerateLog(obj+conent);
+        string log = GenerateLog((obj ?? "null") + conent);
         UnityEngine.Debug.Log(log);
     }
     [Conditional("OPEN_LOG")]
@@ -84,7 +100,7 @@ public class Debuger
         {
             return;
         }
-        string log = GenerateLog(obj.ToString());
+        string log = GenerateLog(obj == null ? "null" : obj.ToString());
         UnityEngine.Debug.LogWarning(log);
     }
     [Conditional("OPEN_LOG")]
@@ -94,15 +110,15 @@ public class Debuger
         {
             return;
         }
-        string conent = string.Empty;
+        StringBuilder conent = new StringBuilder();
         if (args != null)
         {
             foreach (var item in args)
             {
-                conent += item;
+                conent.Append(item);
             }
         }
-        string log = GenerateLog(obj + conent);
+        string log = GenerateLog((obj ?? "null") + conent);
         UnityEngine.Debug.LogWarning(log);
     }
     [Conditional("OPEN_LOG")]
@@ -112,7 +128,7 @@ public class Debuger
         {
             return;
         }
-        string log = GenerateLog(obj.ToString());
+        string log = GenerateLog(obj == null ? "null" : obj.ToString());
         UnityEngine.Debug.LogError(log);
     }
     [Conditional("OPEN_LOG")]
@@ -122,21 +138,21 @@ public class Debuger
         {
             return;
         }
-        string conent = string.Empty;
+        StringBuilder conent = new StringBuilder();
         if (args != null)
         {
             foreach (var item in args)
             {
-                conent += item;
+                conent.Append(item);
             }
         }
-        string log = GenerateLog(obj + conent);
+        string log = GenerateLog((obj ?? "null") + conent);
         UnityEngine.Debug.LogError(log);
     }
 
     #endregion
 
-    #region ÑÕÉ«ÈÕÖ¾´òÓ¡
+    #region é¢œè‰²æ—¥å¿—æ‰“å°
     [Conditional("OPEN_LOG")]
     public static void ColorLog(LogColor color,object obj)
     {
@@ -144,7 +160,7 @@ public class Debuger
         {
             return;
         }
-        string log = GenerateLog(obj.ToString(),color);
+        string log = GenerateLog(obj == null ? "null" : obj.ToString(),color);
         log = GetUnityColor(log, color);
         UnityEngine.Debug.Log(log);
     }
@@ -190,7 +206,7 @@ public class Debuger
         StringBuilder stringBuilder = new StringBuilder(cfg.logHeadFix,100);
         if (cfg.openTime)
         {
-            stringBuilder.AppendFormat(" {0}",DateTime.Now.ToString("hh:mm:ss-fff"));
+            stringBuilder.AppendFormat(" {0}",DateTime.Now.ToString("HH:mm:ss-fff"));
         }
         if (cfg.showThreadID)
         {
@@ -224,6 +240,9 @@ public class Debuger
             case LogColor.Green:
                 msg = $"<color=#00FF00>{msg}</color>";
                 break;
+            case LogColor.Grey:
+                msg = $"<color=#808080>{msg}</color>";
+                break;
             case LogColor.Orange:
                 msg = $"<color=#FFA500>{msg}</color>";
                 break;
@@ -235,6 +254,9 @@ public class Debuger
                 break;
             case LogColor.Magenta:
                 msg = $"<color=#FF00FF>{msg}</color>";
+                break;
+            case LogColor.Purple:
+                msg = $"<color=#800080>{msg}</color>";
                 break;
         }
         return msg;

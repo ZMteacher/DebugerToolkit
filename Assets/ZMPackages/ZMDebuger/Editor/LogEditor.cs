@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------
 *
-* Title: ±ÏÒµ¼¶ÈÕÖ¾ÏµÍ³ 
+* Title: æ¯•ä¸šçº§æ—¥å¿—ç³»ç»Ÿ
 *
-* Description: Ö§³Ö±¾µØÎÄ¼şĞ´Èë¡¢×Ô¶¨ÒåÑÕÉ«ÈÕÖ¾¡¢FPSÊµÊ±ÏÔÊ¾¡¢ÊÖ»úÈÕÖ¾ÔËĞĞÊ±²é¿´¡¢ÈÕÖ¾´úÂë±àÒëÌŞ³ı¡¢ProtoBuff×ªJson¡¢ÈÕÖ¾ÖØ¶¨Ïò
+* Description: æ”¯æŒæœ¬åœ°æ–‡ä»¶å†™å…¥ã€è‡ªå®šä¹‰é¢œè‰²æ—¥å¿—ã€FPSå®æ—¶æ˜¾ç¤ºã€æ‰‹æœºæ—¥å¿—è¿è¡Œæ—¶æŸ¥çœ‹ã€æ—¥å¿—ä»£ç ç¼–è¯‘å‰”é™¤ã€ProtoBuffè½¬Jsonã€æ—¥å¿—é‡å®šå‘
 * 
-* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d ÖıÃÎ
+* Author: https://www.taikr.com/user/63798c7981862239d5b3da44d820a7171f0ce14d é“¸æ¢¦
 *
 * Date: 2023.8.13
 *
@@ -18,22 +18,42 @@ using UnityEngine;
 
 public class LogEditor
 {
-    [MenuItem("ZMLog/´ò¿ªÈÕÖ¾ÏµÍ³")]
+    [MenuItem("ZMLog/æ‰“å¼€æ—¥å¿—ç³»ç»Ÿ")]
     public static void LoadReport()
     {
-        ScriptingDefineSymbols.AddScriptingDefineSymbol("OPEN_LOG");
         GameObject reportObj = GameObject.Find("Reporter");
         if (reportObj==null)
         {
-            reportObj= GameObject.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Scripts/UnityDebuger/Unity-Logs-Viewer/Reporter.prefab"));
+            GameObject reporterPrefab = FindReporterPrefab();
+            if (reporterPrefab == null)
+            {
+                Debug.LogError("Reporter.prefab not found.");
+                return;
+            }
+            reportObj = (GameObject)PrefabUtility.InstantiatePrefab(reporterPrefab);
             reportObj.name = "Reporter";
             AssetDatabase.SaveAssets();
             EditorSceneManager.SaveScene(EditorSceneManager.GetActiveScene());
             AssetDatabase.Refresh();
             Debug.Log("Open Log Finish!");
         }
+        ScriptingDefineSymbols.AddScriptingDefineSymbol("OPEN_LOG");
     }
-    [MenuItem("ZMLog/¹Ø±ÕÈÕÖ¾ÏµÍ³")]
+
+    private static GameObject FindReporterPrefab()
+    {
+        string[] prefabGuids = AssetDatabase.FindAssets("Reporter t:Prefab");
+        foreach (string guid in prefabGuids)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            if (path.EndsWith("/Unity-Logs-Viewer/Reporter.prefab"))
+            {
+                return AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            }
+        }
+        return null;
+    }
+    [MenuItem("ZMLog/å…³é—­æ—¥å¿—ç³»ç»Ÿ")]
     public static void CloseReport()
     {
         ScriptingDefineSymbols.RemoveScriptingDefineSymbol("OPEN_LOG");

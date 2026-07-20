@@ -38,53 +38,27 @@ public class LogRedirection
         {
             if (stack_trace.Contains("Debuger:"))//这里的“* ”是从堆栈中筛选自定义的Log
             {
-                //匹配所有Log行
-                Match matches = Regex.Match(stack_trace, @"\(at(.+)\)", RegexOptions.IgnoreCase);
-                string pathline = "";
-                if (matches.Success)
+                MatchCollection matches = Regex.Matches(stack_trace, @"\(at\s+(.+):(\d+)\)", RegexOptions.IgnoreCase);
+                for (int i = 0; i < matches.Count && i < MaxRegexMatch; i++)
                 {
-                    bool isContainsLine = false;
-                    //找到非Debuger脚本进行跳转
-                    while (matches.Groups[1].Value.Contains("Debuger.cs"))
+                    Match match = matches[i];
+                    string path = match.Groups[1].Value.Trim();
+                    if (path.EndsWith("Debuger.cs", StringComparison.OrdinalIgnoreCase))
                     {
-                        matches = matches.NextMatch();
-                        if (matches.Groups[1].Value.Contains("cs:"+line))
-                        {
-                            isContainsLine= true;
-                        }
-                    }
-                    //查找哈行
-                    if (!isContainsLine )
-                    {
-                        while (!matches.Groups[1].Value.Contains("cs:" + line))
-                        {
-                            matches = matches.NextMatch();
-                        }
-                    }
-                    //跳转逻辑
-                    if (matches.Success)
-                    {
-                        pathline = matches.Groups[1].Value;
-                        pathline = pathline.Replace(" ", "");
-
-                        //找到代码及行数
-                        int split_index = pathline.LastIndexOf(":");
-                        string path = pathline.Substring(0, split_index);
-                        line = Convert.ToInt32(pathline.Substring(split_index + 1));
-                        string fullpath = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Assets"));
-                        fullpath += path;
-                        string strPath = fullpath.Replace('/', '\\');
-                        UnityEditorInternal.InternalEditorUtility.OpenFileAtLineExternal(strPath, line);
-                    }
-                    else
-                    {
-                        Debug.LogError("DebugCodeLocation OnOpenAsset, Error StackTrace");
+                        continue;
                     }
 
-                    matches = matches.NextMatch();
+                    int targetLine;
+                    if (!int.TryParse(match.Groups[2].Value, out targetLine))
+                    {
+                        continue;
+                    }
+
+                    string projectRoot = Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("Assets"));
+                    string fullPath = System.IO.Path.Combine(projectRoot, path).Replace('/', '\\');
+                    UnityEditorInternal.InternalEditorUtility.OpenFileAtLineExternal(fullPath, targetLine);
+                    return true;
                 }
-
-                return true;
             }
         }
 
